@@ -1,0 +1,1 @@
+module.exports.UnconfiguredServiceError = require('./UnconfiguredServiceError');

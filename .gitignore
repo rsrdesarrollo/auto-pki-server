@@ -33,7 +33,12 @@ node_modules
 .node_repl_history
 
 # IDE directory
-.idea
+.idea/
 
 # Private stuff
-CA/
+conf/CA/*.csr
+conf/CA/*.pem
+conf/CA/*.key
+conf/CA/*.cert
+logs/
+conf/config.json

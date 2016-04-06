@@ -1,0 +1,4 @@
+CA Directory
+------------
+
+By default private stuff like keys are stored in here (for the use of cfssl).
