@@ -43,6 +43,7 @@ function pkcs10_request_parser(req, res, next){
         // flag as parsed
         req._body = true
         req.csr = forge.pki.certificationRequestFromPem(rawBody);
+        req.csrRaw = rawBody;
 
         next();
     });

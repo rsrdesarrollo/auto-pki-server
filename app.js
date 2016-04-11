@@ -61,12 +61,13 @@ app.use(function(err, req, res) {
 });
 
 
-var port = process.env.EST_SERVER_PORT | '3000';
-app.set('port', port);
+var port_http = process.env.EST_SERVER_PORT | '3000';
+var port_https = process.env.EST_SECURE_SERVER_PORT | '3443';
+//app.set('port', port_http);
 
 var server = http.createServer(app);
 
-server.listen(port);
+server.listen(port_http);
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -81,11 +82,11 @@ function onError(error) {
     // handle specific listen errors with friendly messages
     switch (error.code) {
         case 'EACCES':
-            console.error('Port ' + port + ' requires elevated privileges');
+            console.error('Port ' + port_http + ' requires elevated privileges');
             process.exit(1);
             break;
         case 'EADDRINUSE':
-            console.error('Port ' + port + ' is already in use');
+            console.error('Port ' + port_http + ' is already in use');
             process.exit(1);
             break;
         default:
