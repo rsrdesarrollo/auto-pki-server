@@ -1,0 +1,11 @@
+{
+  "ca":{
+    "ca_cert": "./CA/ca.pem",
+    "ca_key": "./CA/ca-key.pem"
+  },
+
+  "server":{
+    "server_cert": "./CA/server.pem",
+    "server_key": "./CA/server-key.pem"
+  }
+}
