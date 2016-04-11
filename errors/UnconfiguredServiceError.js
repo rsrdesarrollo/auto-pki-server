@@ -2,6 +2,7 @@ var util = require('util');
 
 function UnconfiguredServiceError (msg){
     Error.call(this);
+    Error.captureStackTrace(this);
     this.message = msg;
 }
 
