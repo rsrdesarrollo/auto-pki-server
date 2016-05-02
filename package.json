@@ -3,20 +3,37 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./app.js"
+    "start": "tsc && concurrently -k \"cfssl serve -ca ./conf/CA/ca.pem -ca-key ./conf/CA/ca-key.pem\" \"node ./app.js\" \"mongod --dbpath ./db/\""
+    "postinstall": "typings install"
   },
   "dependencies": {
+    "angular2": "2.0.0-beta.15",
+    "async": "^2.0.0-rc.3",
     "body-parser": "~1.13.2",
     "content-type": "^1.0.1",
     "cookie-parser": "~1.3.5",
     "debug": "~2.2.0",
+    "es6-shim": "^0.35.0",
     "express": "~4.13.1",
-    "jade": "~1.11.0",
     "mongoose": "^4.4.11",
     "morgan": "~1.6.1",
     "node-cfssl": "^1.0.1",
     "node-forge": "^0.6.39",
+    "passport": "^0.3.2",
+    "passport-client-cert": "^2.0.0",
+    "passport-http": "^0.3.0",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^4.0.0",
+    "pug": "^2.0.0-alpha6",
+    "reflect-metadata": "0.1.2",
+    "rxjs": "5.0.0-beta.2",
     "serve-favicon": "~2.3.0",
-    "type-is": "^1.6.12"
+    "systemjs": "0.19.26",
+    "type-is": "^1.6.12",
+    "zone.js": "0.6.10"
+  },
+  "devDependencies": {
+    "typescript": "^1.8.10",
+    "typings":"^0.7.12"
   }
 }

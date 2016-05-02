@@ -42,3 +42,5 @@ conf/CA/*.key
 conf/CA/*.cert
 logs/
 conf/config.json
+
+db/

@@ -8,7 +8,7 @@ var conf = null;
 module.exports.get_conf = function(){
     if (!conf) {
         try {
-            conf = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.jsona')));
+            conf = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json')));
         } catch (ex) {
             throw new UnconfigureServiceError('Service unconfigured');
         }
