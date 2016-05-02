@@ -6,7 +6,7 @@ var debug = require('debug')('middleware:pkcs10');
 
 function get_charset(req){
     try {
-        return contentType.parse(req).parameters.charset.toLowerCase()
+        return content_type.parse(req).parameters.charset.toLowerCase()
     } catch (e) {
         return undefined
     }

@@ -1,17 +1,17 @@
-const EstController = require('./est_controller');
+const CAController = require('./_i_ca_controller');
 const Cfssl = require('node-cfssl');
 const forge = require('node-forge');
-const debug = require('debug')('est_controller:cfssl');
+const debug = require('debug')('ca_controller:cfssl');
 
 var cfssl_cli = new Cfssl();
 
-var EstControllerCfssl = function () {  // implements EstController
-    EstController.call(this,EstControllerCfssl);
-    EstControllerCfssl._ensureImplements(this);
+var CAControllerCfssl = function () {  // implements CAController
+    CAController.call(this,CAControllerCfssl);
+    CAControllerCfssl._ensureImplements(this);
 };
 
 
-EstControllerCfssl.prototype.get_ca_certificate = function(label, cb){
+CAControllerCfssl.prototype.get_ca_certificate = function(label, cb){
     cfssl_cli.info(label, function(err, res){
         var derCert;
         if(err){
@@ -20,29 +20,25 @@ EstControllerCfssl.prototype.get_ca_certificate = function(label, cb){
 
         var ret = {
             certificate: x509_to_pkcs7_pem(res.certificate),
-            status: EstControllerCfssl.OK
+            status: CAControllerCfssl.OK
         };
 
         cb(err, ret);
     });
 };
 
-EstControllerCfssl.prototype.simple_enroll = function(label, csrPem, cb){
+CAControllerCfssl.prototype.sign_csr = function(label, csrPem, cb){
     cfssl_cli.sign(csrPem, {label: label}, function(err, res){
         if(err){
-            return debug("Error simple_enroll: "+err), cb(err);
+            return debug("Error sign_csr: "+err), cb(err);
         }
 
         var ret = {
             certificate: x509_to_pkcs7_pem(res.certificate),
-            status: EstControllerCfssl.OK
+            status: CAControllerCfssl.OK
         };
         cb(err, ret);
     })
-};
-
-EstControllerCfssl.prototype.simple_reenroll = function(){
-
 };
 
 
@@ -58,4 +54,4 @@ function x509_to_pkcs7_pem(certificate){
     return pem;
 }
 
-module.exports = EstControllerCfssl;
+module.exports = CAControllerCfssl;
