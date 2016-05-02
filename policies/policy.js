@@ -1,22 +1,22 @@
-const Interface = require('../patterns/interface');
+const User = require('../models/user');
 
-function Policy(objectClass){
-    Interface.call(this, objectClass,'Policy', [
-        'is_allowed',
-        'compile'
-    ],{
-        status: {
-            OK: 0,
-            FORBIDDEN: 1,
-            AUTHZ_NEEDED: 2,
-            ADMIN_NEEDED: 3
-        },
-        opType: {
-            CACERT: 20,
-            ENROLL: 21,
-            REENROLL: 22
-        }
-    });
-}
+const passport = require('passport');
+const BasicStrategy = require('passport-http').BasicStrategy;
+const LocalStrategy = require('passport-local').Strategy;
 
-module.exports = Policy;
+passport.use(new BasicStrategy(User.authenticate()));
+passport.use(new LocalStrategy(User.authenticate()));
+
+User.register(
+    new User({_id: "admin", is_admin: true, groups: ["admin"]}),
+    "admin",
+    function(){}
+);
+User.register(
+    new User({_id: "bootstrap", is_admin: false, groups: ["bootstrap"]}),
+    "bootstrap",
+    function(){}
+);
+
+module.exports = passport;
+

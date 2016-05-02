@@ -1,34 +1,32 @@
 /**
  * Module dependencies.
  */
-var fs = require('fs');
-var http = require('http');
-var https = require('https');
-var debug = require('debug')('est_server:server');
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
+const debug = require('debug')('est_server:server');
+const express = require('express');
+const logger = require('morgan');
+const path = require('path');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
-var express = require('express');
-var logger = require('morgan');
-var path = require('path');
-var bodyParser = require('body-parser');
-var errors = require('./errors');
+const est_methods = require('./routes/est_methods');
+const api = require('./routes/api');
 
-var root = require('./routes/index');
-var est_methods = require('./routes/est_methods');
+const app = express();
+const config = require('./conf').get_conf();
 
-var app = express();
+mongoose.connect(config.db.conn_str);
+
 app.disable('x-powered-by');
 app.set('etag', false);
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
 
 app.use(logger('dev'));
 app.use(bodyParser.text());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', root);
+app.use('/api/v1', api);
 app.use('/.well-known/est', est_methods);
 
 // catch 404 and forward to error handler
@@ -61,13 +59,25 @@ app.use(function(err, req, res) {
 });
 
 
-var port_http = process.env.EST_SERVER_PORT | '3000';
-var port_https = process.env.EST_SECURE_SERVER_PORT | '3443';
-//app.set('port', port_http);
+const port_http = process.env.EST_SERVER_PORT | '3000';
+const port_https = process.env.EST_SECURE_SERVER_PORT | '3443';
+
+
+const https_options = {
+    key: fs.readFileSync(path.join(__dirname,config.server.key), 'utf8'),
+    cert: fs.readFileSync(path.join(__dirname,config.server.cert), 'utf8'),
+    ca: [fs.readFileSync(path.join(__dirname,config.server.ca), 'utf8')],
+    requestCert: true,
+    rejectUnauthorized: false
+};
+
 
 var server = http.createServer(app);
+var secure_server = https.createServer(https_options, app);
 
 server.listen(port_http);
+secure_server.listen(port_https);
+
 server.on('error', onError);
 server.on('listening', onListening);
 
