@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "tsc && concurrently -k \"cfssl serve -ca ./conf/CA/ca.pem -ca-key ./conf/CA/ca-key.pem\" \"node ./app.js\" \"mongod --dbpath ./db/\""
+    "start": "tsc && concurrently -k \"cfssl serve -ca ./conf/CA/ca.pem -ca-key ./conf/CA/ca-key.pem\" \"node ./app.js\" \"mongod --dbpath ./db/\"",
     "postinstall": "typings install"
   },
   "dependencies": {
@@ -34,6 +34,6 @@
   },
   "devDependencies": {
     "typescript": "^1.8.10",
-    "typings":"^0.7.12"
+    "typings": "^0.7.12"
   }
 }

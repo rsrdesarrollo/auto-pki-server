@@ -30,16 +30,16 @@ app.use('/api/v1', api);
 app.use('/.well-known/est', est_methods);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+app.use(function (req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use(function(err, req, res) {
+    app.use(function (err, req, res) {
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
@@ -50,7 +50,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res) {
+app.use(function (err, req, res) {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
@@ -64,9 +64,9 @@ const port_https = process.env.EST_SECURE_SERVER_PORT | '3443';
 
 
 const https_options = {
-    key: fs.readFileSync(path.join(__dirname,config.server.key), 'utf8'),
-    cert: fs.readFileSync(path.join(__dirname,config.server.cert), 'utf8'),
-    ca: [fs.readFileSync(path.join(__dirname,config.server.ca), 'utf8')],
+    key: fs.readFileSync(path.join(__dirname, config.server.key), 'utf8'),
+    cert: fs.readFileSync(path.join(__dirname, config.server.cert), 'utf8'),
+    ca: [fs.readFileSync(path.join(__dirname, config.server.ca), 'utf8')],
     requestCert: true,
     rejectUnauthorized: false
 };

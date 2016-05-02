@@ -10,12 +10,14 @@ passport.use(new LocalStrategy(User.authenticate()));
 User.register(
     new User({_id: "admin", is_admin: true, groups: ["admin"]}),
     "admin",
-    function(){}
+    function () {
+    }
 );
 User.register(
     new User({_id: "bootstrap", is_admin: false, groups: ["bootstrap"]}),
     "bootstrap",
-    function(){}
+    function () {
+    }
 );
 
 module.exports = passport;
