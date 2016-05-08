@@ -7,13 +7,11 @@
     "postinstall": "typings install"
   },
   "dependencies": {
-    "angular2": "2.0.0-beta.15",
     "async": "^2.0.0-rc.3",
     "body-parser": "~1.13.2",
     "content-type": "^1.0.1",
     "cookie-parser": "~1.3.5",
     "debug": "~2.2.0",
-    "es6-shim": "^0.35.0",
     "express": "~4.13.1",
     "jsonwebtoken": "^6.2.0",
     "mongoose": "^4.4.11",
@@ -26,16 +24,7 @@
     "passport-jwt": "^2.0.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^4.0.0",
-    "pug": "^2.0.0-alpha6",
-    "reflect-metadata": "0.1.2",
-    "rxjs": "5.0.0-beta.2",
     "serve-favicon": "~2.3.0",
-    "systemjs": "0.19.26",
     "type-is": "^1.6.12",
-    "zone.js": "0.6.10"
   },
-  "devDependencies": {
-    "typescript": "^1.8.10",
-    "typings": "^0.7.12"
-  }
 }
