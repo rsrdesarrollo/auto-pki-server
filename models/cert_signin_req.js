@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 var CertSigninReq = new Schema({
-    _id: Buffer,                // CSR Signature
+    signature: Buffer,
     csr: String,
     fprint: String,
 

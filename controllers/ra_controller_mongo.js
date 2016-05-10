@@ -24,10 +24,10 @@ RAControllerMongo.prototype.is_already_signed = function (user, csr, cb) {
 
 RAControllerMongo.prototype.register_csr = function (user, ip, csr, cb) {
 
-    var id = new Buffer(csr.signature);
+    var signature = new Buffer(csr.signature);
 
     var req = new CertSigninReq({
-        _id: id,
+        signature: signature,
         csr: forge.pki.certificationRequestToPem(csr),
         fprint: forge.pki.getPublicKeyFingerprint(
             csr.publicKey,
@@ -42,9 +42,9 @@ RAControllerMongo.prototype.register_csr = function (user, ip, csr, cb) {
 };
 
 RAControllerMongo.prototype.approve_csr = function (user, ip, csr, cb) {
-    var id = new Buffer(csr.signature);
-    CertSigninReq.findByIdAndUpdate(
-        id,
+    var signature = new Buffer(csr.signature);
+    CertSigninReq.findAndUpdate(
+        {signature: signature},
         {
             $set: {
                 auth_user: user,
@@ -58,9 +58,8 @@ RAControllerMongo.prototype.approve_csr = function (user, ip, csr, cb) {
 };
 
 RAControllerMongo.prototype.delete_csr = function (csr, cb) {
-    var id = new Buffer(csr.signature);
     CertSigninReq.findByIdAndUpdate(
-        id,
+        {signature: csr.signature},
         {
             $set: {
                 is_deleted: true

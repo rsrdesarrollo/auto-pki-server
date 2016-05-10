@@ -112,10 +112,12 @@ router.post(OPTIONAL_LABEL_REGX + '/simpleenroll',
     }
 );
 
-router.post(OPTIONAL_LABEL_REGX + '/simplereenroll', pkcs10_decoder, function (req, res) {
-    console.log(req.param('ca_lable'));
-    res.render('index', {title: 'Express'});
-});
+router.post(OPTIONAL_LABEL_REGX + '/simplereenroll',
+    pkcs10_decoder,
+    function (req, res) {
+        res.send("Not implemented");
+    }
+);
 
 
 module.exports = router;
