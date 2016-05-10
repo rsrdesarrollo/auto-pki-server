@@ -10,7 +10,9 @@ const logger = require('morgan');
 const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const passport = require('passport');
 
+const setup = require('./routes/setup');
 const est_methods = require('./routes/est_methods');
 const api = require('./routes/api');
 
@@ -23,10 +25,11 @@ app.disable('x-powered-by');
 app.set('etag', false);
 
 app.use(logger('dev'));
-app.use(bodyParser.text());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'frontend', 'public')));
+app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
 
-app.use('/api/v1', api);
+app.use('/setup', setup);
+app.use('/api/v1', bodyParser.json(), api);
 app.use('/.well-known/est', est_methods);
 
 // catch 404 and forward to error handler
@@ -41,9 +44,11 @@ app.use(function (req, res, next) {
 if (app.get('env') === 'development') {
     app.use(function (err, req, res) {
         res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
+
+        res.json({
+            success: false,
+            error: err.message,
+            exception: err
         });
     });
 }
@@ -52,9 +57,10 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function (err, req, res) {
     res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
+
+    res.json({
+        success: false,
+        error: err.message
     });
 });
 
