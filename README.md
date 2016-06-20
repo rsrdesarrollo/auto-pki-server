@@ -6,3 +6,14 @@
 [![Coverage Status](https://coveralls.io/repos/rsrdesarrollo/est-server/badge.svg)](https://coveralls.io/r/rsrdesarrollo/est-server)
 
 A brand new Enrollment over Secure Transport server.
+
+## Installation
+
+```bash
+apt install node mongodb golan
+git clone git@github.com:rsrdesarrollo/est-server.git
+cd est-server
+./install.sh
+npm start
+```
+

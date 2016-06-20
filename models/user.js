@@ -25,4 +25,20 @@ User.methods.getTokenInfo = function(){
     };
 };
 
+User.options.toJSON = {
+    transform: function (doc, resource, options) {
+        var ret = {};
+
+        ret.id = resource._id;
+        ret.type = "users";
+
+        delete resource._id;
+        delete resource.__v;
+
+        ret.attributes = resource;
+
+        return ret;
+    }
+}
+
 module.exports = mongoose.model('User', User);
