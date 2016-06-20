@@ -2,7 +2,6 @@
  * Module dependencies.
  */
 const fs = require('fs');
-const http = require('http');
 const https = require('https');
 const debug = require('debug')('est_server:server');
 const express = require('express');
@@ -11,6 +10,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const mdns = require('mdns');
 
 const setup = require('./routes/setup');
 const est_methods = require('./routes/est_methods');
@@ -64,10 +64,7 @@ app.use(function (err, req, res) {
     });
 });
 
-
-const port_http = process.env.EST_SERVER_PORT | '3000';
 const port_https = process.env.EST_SECURE_SERVER_PORT | '3443';
-
 
 const https_options = {
     key: fs.readFileSync(path.join(__dirname, config.server.key), 'utf8'),
@@ -78,14 +75,12 @@ const https_options = {
 };
 
 
-var server = http.createServer(app);
 var secure_server = https.createServer(https_options, app);
 
-server.listen(port_http);
 secure_server.listen(port_https);
 
-server.on('error', onError);
-server.on('listening', onListening);
+secure_server.on('error', onError);
+secure_server.on('listening', onListening);
 
 /**
  * Event listener for HTTP server "error" event.
@@ -98,11 +93,11 @@ function onError(error) {
     // handle specific listen errors with friendly messages
     switch (error.code) {
         case 'EACCES':
-            console.error('Port ' + port_http + ' requires elevated privileges');
+            console.error('Port ' + port_https + ' requires elevated privileges');
             process.exit(1);
             break;
         case 'EADDRINUSE':
-            console.error('Port ' + port_http + ' is already in use');
+            console.error('Port ' + port_https + ' is already in use');
             process.exit(1);
             break;
         default:
@@ -114,9 +109,16 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 function onListening() {
-    var addr = server.address();
+    var addr = secure_server.address();
     var bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
     debug('Listening on ' + bind);
+
+    var ad = mdns.createAdvertisement(
+        mdns.tcp('est'),
+        addr.port,{
+            name: 'est-server'
+        });
+    ad.start();
 }
