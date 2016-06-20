@@ -19,7 +19,7 @@ CAControllerCfssl.prototype.get_ca_certificate = function (label, cb) {
         }
 
         var ret = {
-            certificate: x509_to_pkcs7_pem(res.certificate),
+            certificate: x509_to_pkcs7_pem([res.certificate]),
             status: CAControllerCfssl.OK
         };
 
@@ -42,10 +42,12 @@ CAControllerCfssl.prototype.sign_csr = function (label, csrPem, cb) {
 };
 
 
-function x509_to_pkcs7_pem(certificate) {
-    var cert = forge.pki.certificateFromPem(certificate);
+function x509_to_pkcs7_pem(certificates) {
     var p7 = forge.pkcs7.createSignedData();
-    p7.addCertificate(cert);;
+    for (i=0, len=certificates.length; i < len; i++){
+        var cert = forge.pki.certificateFromPem(certificates[i]);
+        p7.addCertificate(cert);
+    }
     var pem = forge.pkcs7.messageToPem(p7);
 
     pem = pem.replace(/\r\n/g, '\n');

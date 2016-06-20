@@ -10,8 +10,8 @@ var RAControllerMongo = function () {  // implements RAController
 };
 
 RAControllerMongo.prototype.get_registered_csr = function (csr, cb) {
-    var id = new Buffer(csr.signature);
-    CertSigninReq.findById(id, function (err, csr_reg) {
+    var signature = new Buffer(csr.signature);
+    CertSigninReq.findOne({signature: signature}, function (err, csr_reg) {
         cb(err, csr_reg);
     });
 };
@@ -27,6 +27,8 @@ RAControllerMongo.prototype.register_csr = function (user, ip, csr, cb) {
     var signature = new Buffer(csr.signature);
 
     var req = new CertSigninReq({
+        cn: csr.subject.getField('CN').value,
+        
         signature: signature,
         csr: forge.pki.certificationRequestToPem(csr),
         fprint: forge.pki.getPublicKeyFingerprint(
