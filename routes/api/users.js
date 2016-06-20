@@ -13,7 +13,7 @@ router.get('/', function (req,res){
         }
 
         res.json({
-            users: result.map(it => it.toJSON())
+            data: result.map(it => it.toJSON())
         })
 
     });
@@ -32,7 +32,7 @@ router.get('/:id', function (req,res){
         }
 
         res.json({
-            user: result.toJSON()
+            data: result.toJSON()
         })
 
     });
@@ -47,7 +47,7 @@ router.post('/', function (req,res){
         }
 
         res.json({
-            users: result.map(it => it.toJSON())
+            data: result.map(it => it.toJSON())
         })
 
     });

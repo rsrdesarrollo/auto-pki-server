@@ -1,5 +1,7 @@
 var express = require('express');
 var User = require('../models/user');
+var Group = require('../models/group');
+
 var async = require('async');
 
 var router = express.Router();
@@ -14,14 +16,19 @@ router.get('/', function(req, res){
     async.waterfall([
         User.register.bind(
             User,
-            new User({username: "admin", is_admin: true, groups: ["admin"]}),            /* User Object */
+            new User({username: "admin", is_admin: true, groups: ["admin"]}),            /* Group Object */
             "admin"                                                                 /* password */
         ),
         ignore_result,
         User.register.bind(
             User,
-            new User({username: "bootstrap", is_admin: false, groups: ["bootstrap"]}),   /* User Object */
+            new User({username: "bootstrap", is_admin: false, groups: ["bootstrap"]}),   /* Group Object */
             "bootstrap"                                                             /* password */
+        ),
+        ignore_result,
+        Group.create.bind(
+            Group,
+            [new Group({groupname: 'admin'}),new Group({groupname: 'bootstrap'})]
         ),
         ignore_result
     ], function(err){

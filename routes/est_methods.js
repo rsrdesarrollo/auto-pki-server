@@ -62,7 +62,7 @@ function response_forbidden(res, err, msg) {
  GET Routes
  */
 router.get(OPTIONAL_LABEL_REGX + '/cacerts', function (req, res) {
-    var ca_label = req.param('ca_lable');
+    var ca_label = req.params.ca_lable;
     ca.get_ca_certificate(ca_label, response_pkcs7.bind(null, res));
 });
 
@@ -73,24 +73,24 @@ router.post(OPTIONAL_LABEL_REGX + '/simpleenroll',
     pkcs10_decoder,
     policy.authenticate('basic', {session: false}),
     function (req, res) {
-        var ca_lable = req.param('ca_lable');
+        var ca_label = req.params.ca_lable;
         var user = req.user;
         var client_ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
         if (user.is_admin) {
-            ca.sign_csr(ca_lable, req.csrRaw, response_pkcs7.bind(null, res));
+            ca.sign_csr(ca_label, req.csrRaw, response_pkcs7.bind(null, res));
         } else if (user.groups.indexOf("bootstrap") > -1) {
             async.waterfall([
                 ra.get_registered_csr.bind(ra, req.csr),
                 function (reg_csr, cb) {
                     if (!reg_csr) {
-                        ra.register_csr(user, client_ip, req.csr, function (err) {
+                        ra.register_csr(user._id, client_ip, req.csr, function (err) {
                             cb(err, {try_later: true});
                         });
                     } else if (reg_csr.is_removed) {
                         cb(null, null);
                     } else if (reg_csr.is_approved) {
-                        ca.sign_csr(ca_lable, req.csrRaw, cb);
+                        ca.sign_csr(ca_label, req.csrRaw, cb);
                     } else {
                         cb(null, {try_later: true});
                     }

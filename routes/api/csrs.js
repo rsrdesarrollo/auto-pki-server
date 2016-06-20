@@ -13,7 +13,7 @@ router.get('/', function (req,res){
         }
 
         res.json({
-            csrs: result.map(it => it.toJSON())
+            data: result.map(it => it.toJSON())
         })
 
     });
@@ -32,7 +32,7 @@ router.get('/:id', function (req,res){
         }
 
         res.json({
-            csr: result.toJSON()
+            data: result.toJSON()
         })
 
     });
@@ -47,9 +47,15 @@ router.post('/', function (req,res){
         }
 
         res.json({
-            csrs: result.map(it => it.toJSON())
+            data: result.map(it => it.toJSON())
         })
 
+    });
+});
+
+router.patch('/:id', function (req,res){
+    res.json({
+        errors: ["not implemented"]
     });
 });
 
