@@ -56,9 +56,9 @@ cfssl gencert -ca ca.pem -ca-key ca-key.pem -hostname=$(hostname -f) csr_server.
 rm *.csr
 rm csr_*.json
 
-cd -
+cd - &> /dev/null
 
-echo > conf/config.json <<EOF
+cat > conf/config.json <<EOF
 {
   "ca": {
     "cert": "conf/CA/ca.pem",
