@@ -57,3 +57,25 @@ rm *.csr
 rm csr_*.json
 
 cd -
+
+echo > conf/config.json <<EOF
+{
+  "ca": {
+    "cert": "conf/CA/ca.pem",
+    "key": "conf/CA/ca-key.pem",
+  },
+  "server": {
+    "ca": "conf/CA/ca.pem",
+    "cert": "conf/CA/server.pem",
+    "key": "conf/CA/server-key.pem"
+  },
+  "db": {
+    "conn_str": "mongodb://localhost/est_server",
+  },
+  "tokens": {
+    "secret": "$(openssl rand 24 | base64)",
+    "issuer": "$(hostname -f)",
+    "audience": "$(hostname -f)"
+  }
+}
+EOF
