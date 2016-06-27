@@ -10,7 +10,7 @@ A brand new Enrollment over Secure Transport server.
 ## Installation
 
 ```bash
-apt install node mongodb golan
+apt install nodejs npm mongodb golan
 git clone git@github.com:rsrdesarrollo/auto-pki-server.git
 cd auto-pki-server
 ./install.sh
