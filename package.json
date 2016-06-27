@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "concurrently -k \"cfssl serve -ca ./conf/CA/ca.pem -ca-key ./conf/CA/ca-key.pem\" \"node ./app.js\" \"mongod --dbpath ./db/\"",
+    "start": "concurrently -k \"cfssl serve -ca ./conf/CA/ca.pem -ca-key ./conf/CA/ca-key.pem\" \"node ./app.js\"",
+    "start:localdb": "concurrently -k \"cfssl serve -ca ./conf/CA/ca.pem -ca-key ./conf/CA/ca-key.pem\" \"node ./app.js\" \"mongod --dbpath ./db/\"",
     "start:thirdapps": "concurrently -k \"cfssl serve -ca ./conf/CA/ca.pem -ca-key ./conf/CA/ca-key.pem\" \"mongod --dbpath ./db/\""
   },
   "dependencies": {
