@@ -15,7 +15,7 @@ module.exports = {
             try {
                 conf = read_conf_file();
             } catch (ex) {
-                throw new UnconfigureServiceError('Service unconfigured');
+                throw new UnconfigureServiceError('Error reading configuration: '+ex.message);
             }
         }
         return conf;
