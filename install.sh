@@ -24,7 +24,8 @@ fi
 echo "Installing NPM dependencies..."
 npm install
 
-mkdir -p conf/CA
+mkdir db &> /dev/null
+mkdir -p conf/CA &> /dev/null
 cd conf/CA
 
 ROOT_CA_NAME="ROOT CA"
@@ -62,7 +63,7 @@ cat > conf/config.json <<EOF
 {
   "ca": {
     "cert": "conf/CA/ca.pem",
-    "key": "conf/CA/ca-key.pem",
+    "key": "conf/CA/ca-key.pem"
   },
   "server": {
     "ca": "conf/CA/ca.pem",
@@ -70,7 +71,7 @@ cat > conf/config.json <<EOF
     "key": "conf/CA/server-key.pem"
   },
   "db": {
-    "conn_str": "mongodb://localhost/est_server",
+    "conn_str": "mongodb://localhost/est_server"
   },
   "tokens": {
     "secret": "$(openssl rand 24 | base64)",
