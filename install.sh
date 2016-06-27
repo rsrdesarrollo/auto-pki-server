@@ -5,6 +5,7 @@ if [ -z $GOPATH ]; then
     mkdir ~/.gopath
     export GOPATH=~/.gopath
     echo "export GOPATH=~/.gopath" >> ~/.bashrc
+    echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
 fi
 
 if [ ! -e $GOPATH/bin/cfssl ]; then
