@@ -80,3 +80,14 @@ cat > conf/config.json <<EOF
   }
 }
 EOF
+
+git submodule init
+git submodule update
+
+cd frontend
+npm install
+bower install
+
+./node_modules/ember-cli/bin/ember build
+
+cd - &> /dev/null
