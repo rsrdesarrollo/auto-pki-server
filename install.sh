@@ -3,9 +3,8 @@
 echo "Installing cfssl in GOPATH"
 if [ -z $GOPATH ]; then
     mkdir ~/.gopath
-    export GOPATH=~/.gopath
     echo "export GOPATH=~/.gopath" >> ~/.bashrc
-    echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
+    . ~/.bashrc
 fi
 
 if [ ! -e $GOPATH/bin/cfssl ]; then
@@ -13,6 +12,12 @@ if [ ! -e $GOPATH/bin/cfssl ]; then
 fi
 if [ ! -e $GOPATH/bin/cfssljson ];then
     go get -u github.com/cloudflare/cfssl/cmd/cfssljson
+fi
+
+if [ -z `which cfssl` ]; then
+    echo Adding $GOPATH to PATH.
+    echo "export PATH=$PATH:$GOPATH/bin" >> ~/.bashrc
+    . ~/.bashrc
 fi
 
 echo "Installing NPM dependencies..."
