@@ -54,9 +54,21 @@ router.post('/', function (req,res){
 });
 
 router.patch('/:id', function (req,res){
-    res.json({
-        errors: ["not implemented"]
-    });
+    var query = {
+        $set: req.body.data.attributes
+    };
+
+    CertSignReq.findByIdAndUpdate(req.params.id, query,
+        function(err, result){
+            if(err) {
+                res.json({
+                    errors: [err.message]
+                });
+            }else{
+                res.json({errors: []});
+            }
+        }
+    );
 });
 
 module.exports = router;

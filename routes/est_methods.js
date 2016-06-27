@@ -90,7 +90,7 @@ router.post(OPTIONAL_LABEL_REGX + '/simpleenroll',
                     } else if (reg_csr.is_removed) {
                         cb(null, null);
                     } else if (reg_csr.is_approved) {
-                        ca.sign_csr(ca_label, req.csrRaw, cb);
+                        ca.sign_csr(ca_label, reg_csr, cb);
                     } else {
                         cb(null, {try_later: true});
                     }
@@ -103,7 +103,7 @@ router.post(OPTIONAL_LABEL_REGX + '/simpleenroll',
 
                     response_pkcs7(res, err, result);
                 } else if (result.try_later) {
-                    response_retry_after(res, err, 600);
+                    response_retry_after(res, err, 60);
                 } else {
                     response_forbidden(res, err, "Forbidden");
                 }

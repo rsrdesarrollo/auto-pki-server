@@ -2,13 +2,12 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 var CertSigninReq = new Schema({
-    signature: Buffer,
     csr: String,
     fprint: String,
 
     cn: String,
-    //emailAddress: String,
-    //subjectAltName: [String],
+    subject_alt_name: [Schema.Types.Mixed],
+    public_key: String,
 
     is_removed: {type: Boolean, default: false},
     is_approved: {type: Boolean, default: false},
@@ -21,8 +20,7 @@ var CertSigninReq = new Schema({
     reg_ip: String
 });
 
-CertSigninReq.index({signature: -1});
-CertSigninReq.index({signature: -1});
+CertSigninReq.index({cn: 1, public_key:1});
 
 CertSigninReq.options.toJSON = {
     transform: function (doc, resource, options) {
@@ -33,7 +31,6 @@ CertSigninReq.options.toJSON = {
 
         delete resource._id;
         delete resource.__v;
-        delete resource.signature;
         delete resource.csr;
 
         ret.attributes = resource;

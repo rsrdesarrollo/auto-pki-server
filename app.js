@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'frontend', 'public')));
 app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
 
 app.use('/setup', setup);
-app.use('/api/v1', bodyParser.json(), api);
+app.use('/api/v1', bodyParser.json({type: "application/vnd.api+json"}), api);
 app.use('/.well-known/est', est_methods);
 
 // catch 404 and forward to error handler
@@ -115,10 +115,14 @@ function onListening() {
         : 'port ' + addr.port;
     debug('Listening on ' + bind);
 
-    var ad = mdns.createAdvertisement(
-        mdns.tcp('est'),
-        addr.port,{
-            name: 'est-server'
-        });
-    ad.start();
+    try{
+        var ad = mdns.createAdvertisement(
+            mdns.tcp('est'),
+            addr.port,{
+                name: 'est-server'
+            });
+        ad.start();
+    }catch (ex){
+        console.log(ex);
+    }
 }

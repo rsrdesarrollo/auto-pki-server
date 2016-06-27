@@ -10,31 +10,37 @@ var RAControllerMongo = function () {  // implements RAController
 };
 
 RAControllerMongo.prototype.get_registered_csr = function (csr, cb) {
-    var signature = new Buffer(csr.signature);
-    CertSigninReq.findOne({signature: signature}, function (err, csr_reg) {
+    var pk = forge.pki.publicKeyToPem(csr.publicKey);
+    var cn = csr.subject.getField('CN');
+    cn = (cn? cn.value: "");
+
+    CertSigninReq.findOne({cn: cn, public_key:pk}, function (err, csr_reg) {
         cb(err, csr_reg);
     });
 };
 
-RAControllerMongo.prototype.is_already_signed = function (user, csr, cb) {
-    var id = new Buffer(csr.signature);
-    CertSigninReq.findById(id, cb);
-};
-
-
 RAControllerMongo.prototype.register_csr = function (user, ip, csr, cb) {
 
-    var signature = new Buffer(csr.signature);
+    var pk = forge.pki.publicKeyToPem(csr.publicKey);
+    var cn = csr.subject.getField('CN');
+    cn = (cn? cn.value: "");
+
+    var extensions = csr.getAttribute({name: 'extensionRequest'}).extensions;
+    var altNames = extensions.find(x => x.name === "subjectAltName");
+
+    altNames = (altNames ? altNames.altNames:null);
 
     var req = new CertSigninReq({
-        cn: csr.subject.getField('CN').value,
+        cn: cn,
         
-        signature: signature,
         csr: forge.pki.certificationRequestToPem(csr),
         fprint: forge.pki.getPublicKeyFingerprint(
             csr.publicKey,
             {encoding: 'hex', delimiter: ':'}
         ),
+        public_key: pk,
+        subject_alt_name: altNames,
+        
         reg_user: user,
         reg_ip: ip
     });
@@ -44,9 +50,12 @@ RAControllerMongo.prototype.register_csr = function (user, ip, csr, cb) {
 };
 
 RAControllerMongo.prototype.approve_csr = function (user, ip, csr, cb) {
-    var signature = new Buffer(csr.signature);
-    CertSigninReq.findAndUpdate(
-        {signature: signature},
+    var pk = forge.pki.publicKeyToPem(csr.publicKey);
+    var cn = csr.subject.getField('CN');
+    cn = (cn? cn.value: "");
+
+    CertSigninReq.findOneAndUpdate(
+        {cn: cn, public_key:pk},
         {
             $set: {
                 auth_user: user,
@@ -60,8 +69,12 @@ RAControllerMongo.prototype.approve_csr = function (user, ip, csr, cb) {
 };
 
 RAControllerMongo.prototype.delete_csr = function (csr, cb) {
-    CertSigninReq.findByIdAndUpdate(
-        {signature: csr.signature},
+    var pk = forge.pki.publicKeyToPem(csr.publicKey);
+    var cn = csr.subject.getField('CN');
+    cn = (cn? cn.value: "");
+
+    CertSigninReq.findOneAndUpdate(
+        {cn: cn, public_key:pk},
         {
             $set: {
                 is_deleted: true

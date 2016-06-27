@@ -27,14 +27,14 @@ CAControllerCfssl.prototype.get_ca_certificate = function (label, cb) {
     });
 };
 
-CAControllerCfssl.prototype.sign_csr = function (label, csrPem, cb) {
-    cfssl_cli.sign(csrPem, {label: label}, function (err, res) {
+CAControllerCfssl.prototype.sign_csr = function (label, csr_obj, cb) {
+    cfssl_cli.sign(csr_obj.csr, {label: label}, function (err, res) {
         if (err) {
             return debug("Error sign_csr: " + err), cb(err);
         }
 
         var ret = {
-            certificate: x509_to_pkcs7_pem(res.certificate),
+            certificate: x509_to_pkcs7_pem([res.certificate]),
             status: CAControllerCfssl.OK
         };
         cb(err, ret);
