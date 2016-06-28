@@ -1,6 +1,6 @@
 {
   "name": "est-server",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "concurrently -k \"cfssl serve -ca ./conf/CA/ca.pem -ca-key ./conf/CA/ca-key.pem\" \"node ./app.js\"",
