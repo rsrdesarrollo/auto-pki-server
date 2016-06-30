@@ -15,6 +15,7 @@
     "express": "~4.13.1",
     "express-content-length-validator": "^1.0.0",
     "helmet": "^2.1.1",
+    "http-status-codes": "^1.0.6",
     "jsonwebtoken": "^6.2.0",
     "mdns": "^2.3.3",
     "mongoose": "^4.4.11",

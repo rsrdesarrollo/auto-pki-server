@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const config = require('../conf').get_conf();
+const HttpStatus = require('http-status-codes');
 
 const passport = require('passport');
 const BasicStrategy = require('passport-http').BasicStrategy;
@@ -31,6 +32,16 @@ passport.use(new JwtStrategy(jwt_opts, function(jwt_payload, done){
         }
     });
 }));
+
+passport.only_admins = function (req,res,next) {
+    if(!req.user.is_admin){
+        res.status(HttpStatus.FORBIDDEN).json({
+            errors: ["Access Forbidden for current user."]
+        });
+    }else{
+        next();
+    }
+}
 
 module.exports = passport;
 
