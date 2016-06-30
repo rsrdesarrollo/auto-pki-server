@@ -21,4 +21,6 @@ Group.options.toJSON = {
     }
 };
 
+Group.index({groupname: 1}, { unique: true });
+
 module.exports = mongoose.model('Group', Group);

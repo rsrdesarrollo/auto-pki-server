@@ -41,4 +41,6 @@ User.options.toJSON = {
     }
 }
 
+User.index({username: 1}, { unique: true });
+
 module.exports = mongoose.model('User', User);

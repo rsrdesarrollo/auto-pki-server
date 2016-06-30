@@ -6,34 +6,34 @@ var async = require('async');
 
 var router = express.Router();
 
-function ignore_result(res, cb){
-    cb();
+function model_wraps_errors(modelObj, modelFunc){
+    var args = Array.prototype.slice.call(arguments, 2);
+    return function(cb){
+        args.push(
+            function (err, res) {
+                cb(null, {error:err, result:res});
+            }
+        );
+        modelObj[modelFunc].apply(modelObj, args);
+    }
 }
 
-router.get('/', function(req, res){
-    // TODO: Mejorar esto.
-
-    async.waterfall([
-        User.register.bind(
-            User,
+module.exports = function(){
+    async.parallel({
+        createAdmin: model_wraps_errors(User, 'register',
             new User({username: "admin", is_admin: true, groups: ["admin"]}),            /* Group Object */
             "admin"                                                                 /* password */
         ),
-        ignore_result,
-        User.register.bind(
-            User,
+        createBootstrap: model_wraps_errors(User, 'register',
             new User({username: "bootstrap", is_admin: false, groups: ["bootstrap"]}),   /* Group Object */
             "bootstrap"                                                             /* password */
         ),
-        ignore_result,
-        Group.create.bind(
-            Group,
+        createGroups: model_wraps_errors(Group, 'create',
             [new Group({groupname: 'admin'}),new Group({groupname: 'bootstrap'})]
-        ),
-        ignore_result
-    ], function(err){
-        res.json(err);
-    });
-});
+        )
+    }, function(err, results) {
+        if(err)
+            throw err;
 
-module.exports = router;
+    });
+};

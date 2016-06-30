@@ -9,10 +9,11 @@ const logger = require('morgan');
 const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const passport = require('passport');
 const mdns = require('mdns');
+const helmet = require('helmet');
+const contentLength = require('express-content-length-validator');
 
-const setup = require('./routes/setup');
+const initial_setup = require('./conf/setup');
 const est_methods = require('./routes/est_methods');
 const api = require('./routes/api');
 
@@ -20,15 +21,26 @@ const app = express();
 const config = require('./conf').get_conf();
 
 mongoose.connect(config.db.conn_str);
+initial_setup();
 
 app.disable('x-powered-by');
-app.set('etag', false);
+
+app.use(contentLength.validateMax({
+    max: 10*1024*1024, // max size accepted for the content-length in bytes 10Mb
+    status: 400,
+    message: "Invalid: Message too big."
+}));
+app.use(helmet.frameguard({ action: 'deny' }));
+app.use(helmet.xssFilter());
+app.use(helmet.hsts({ maxAge: 10*365*24*60*60*1000 }));
+app.use(helmet.ieNoOpen());
+app.use(helmet.noSniff());
+app.use(helmet.dnsPrefetchControl({ allow: false }));
 
 app.use(logger('dev'));
 app.use(express.static(path.join(__dirname, 'frontend', 'public')));
 app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
 
-app.use('/setup', setup);
 app.use('/api/v1', bodyParser.json({type: "application/vnd.api+json"}), api);
 app.use('/.well-known/est', est_methods);
 
