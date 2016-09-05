@@ -1,11 +1,16 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-var passportLocalMongoose = require('passport-local-mongoose');
+const passportLocalMongoose = require('passport-local-mongoose');
+const randomstring = require('randomstring').generate;
+const base32 = require('thirty-two');
+
 
 var User = new Schema({
     username: String,
     groups: [String],
-    is_admin: Boolean
+    is_admin: Boolean,
+    needs_2f: {type:Boolean, default: false},
+    key_2f: {type: String, default: randomstring}
 });
 
 User.plugin(passportLocalMongoose, {
@@ -21,7 +26,8 @@ User.methods.getTokenInfo = function(){
         sub: self._id,
         username: self.username,
         groups: self.groups,
-        is_admin: self.is_admin
+        is_admin: self.is_admin,
+        need_2f: self.need_2f
     };
 };
 
@@ -34,6 +40,8 @@ User.options.toJSON = {
 
         delete resource._id;
         delete resource.__v;
+
+        resource.key_2f = base32.encode(resource.key_2f).toString().replace(/=/g,'');
 
         ret.attributes = resource;
 

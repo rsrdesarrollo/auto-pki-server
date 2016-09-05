@@ -6,6 +6,7 @@ var router = express.Router();
 
 router.get('/', policy.authenticate('jwt', { session: false}), policy.only_admins,
     function (req,res){
+        
         User.find({}).exec(function (err, result) {
             if(err){
                 return res.json({

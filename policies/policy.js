@@ -7,6 +7,7 @@ const BasicStrategy = require('passport-http').BasicStrategy;
 const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
+const TotpStrategy = require('passport-totp').Strategy;
 
 var jwt_opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer'),
@@ -26,12 +27,29 @@ passport.use(new JwtStrategy(jwt_opts, function(jwt_payload, done){
         }
 
         if(user){
+            user.jwt = jwt_payload;
             return done(null, user);
         }else{
             return done(null, false);
         }
     });
 }));
+
+passport.use(new TotpStrategy(
+    function(user, done) {
+        return done(null, user.key_2f, 30);
+    }
+));
+
+passport.serializeUser(function(user, done) {
+    done(null, user._id);
+});
+
+passport.deserializeUser(function(id, done) {
+    User.findById(id, function(err, user) {
+        done(err, user);
+    });
+});
 
 passport.only_admins = function (req,res,next) {
     if(!req.user.is_admin){
@@ -41,7 +59,7 @@ passport.only_admins = function (req,res,next) {
     }else{
         next();
     }
-}
+};
 
 module.exports = passport;
 

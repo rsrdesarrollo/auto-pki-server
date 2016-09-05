@@ -5,6 +5,8 @@ const fs = require('fs');
 const https = require('https');
 const debug = require('debug')('est_server:server');
 const express = require('express');
+const cookieParser = require('cookie-parser');
+const session = require('express-session')
 const logger = require('morgan');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -12,7 +14,9 @@ const mongoose = require('mongoose');
 const mdns = require('mdns');
 const helmet = require('helmet');
 const contentLength = require('express-content-length-validator');
+const randstring = require('randomstring').generate;
 
+const policy = require('./policies/policy');
 const initial_setup = require('./conf/setup');
 const est_methods = require('./routes/est_methods');
 const api = require('./routes/api');
@@ -40,6 +44,18 @@ app.use(helmet.dnsPrefetchControl({ allow: false }));
 app.use(logger('dev'));
 app.use(express.static(path.join(__dirname, 'frontend', 'public')));
 app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
+
+var cookie_secret = "cookie secret";
+
+app.use(cookieParser(cookie_secret));
+app.use(session({
+    secret: cookie_secret ,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: true }
+}));
+app.use(policy.initialize());
+app.use(policy.session());
 
 app.use('/api/v1', bodyParser.json({type: "application/vnd.api+json"}), api);
 app.use('/.well-known/est', est_methods);
