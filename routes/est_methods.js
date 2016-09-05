@@ -52,7 +52,7 @@ function response_retry_after(res, err, timeout) {
 
 function response_forbidden(res, err, msg) {
     if (err) {
-        throw err;
+        debug(err);
     }
 
     res.status(403);
