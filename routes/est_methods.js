@@ -4,6 +4,7 @@
 const express = require('express');
 const async = require('async');
 
+const debug = require('debug')('est_methods');
 const CAControllerCfssl = require('../controllers/ca_controller_cfssl');
 const RAControllerMongo = require('../controllers/ra_controller_mongo');
 const pkcs10_decoder = require('../middleware/pkcs10');
@@ -31,7 +32,7 @@ const OPTIONAL_LABEL_REGX = '(/:ca_lable)?';
  */
 function response_pkcs7(res, err, result) {
     if (err) {
-        throw err;
+        debug(err);
     }
 
     res.set('Content-Type', 'application/pkcs7-mime');
@@ -77,9 +78,7 @@ router.post(OPTIONAL_LABEL_REGX + '/simpleenroll',
         var user = req.user;
         var client_ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-        if (user.is_admin) {
-            ca.sign_csr(ca_label, req.csrRaw, response_pkcs7.bind(null, res));
-        } else if (user.groups.indexOf("bootstrap") > -1) {
+        if (user.groups.indexOf("bootstrap") > -1) {
             async.waterfall([
                 ra.get_registered_csr.bind(ra, req.csr),
                 function (reg_csr, cb) {
@@ -87,8 +86,6 @@ router.post(OPTIONAL_LABEL_REGX + '/simpleenroll',
                         ra.register_csr(user._id, client_ip, req.csr, function (err) {
                             cb(err, {try_later: true});
                         });
-                    } else if (reg_csr.is_removed) {
-                        cb(null, null);
                     } else if (reg_csr.is_approved) {
                         ca.sign_csr(ca_label, reg_csr, cb);
                     } else {
@@ -96,16 +93,16 @@ router.post(OPTIONAL_LABEL_REGX + '/simpleenroll',
                     }
                 }
             ], function (err, result) {
-                if (result.certificate) {
+                if (err){
+                    response_forbidden(res, err, "Forbidden");
+                } else if (result.certificate) {
                     ra.delete_csr(req.csr, function (err) {
-                        if (err) throw err;
+                        if (err) debug(err);
                     });
 
                     response_pkcs7(res, err, result);
                 } else if (result.try_later) {
                     response_retry_after(res, err, 60);
-                } else {
-                    response_forbidden(res, err, "Forbidden");
                 }
             });
         }

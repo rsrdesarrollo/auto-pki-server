@@ -2,6 +2,7 @@ const CAController = require('./_i_ca_controller');
 const Cfssl = require('node-cfssl');
 const forge = require('node-forge');
 const debug = require('debug')('ca_controller:cfssl');
+const Client = require('../models/client');
 
 var cfssl_cli = new Cfssl();
 
@@ -33,11 +34,37 @@ CAControllerCfssl.prototype.sign_csr = function (label, csr_obj, cb) {
             return debug("Error sign_csr: " + err), cb(err);
         }
 
-        var ret = {
-            certificate: x509_to_pkcs7_pem([res.certificate]),
-            status: CAControllerCfssl.OK
-        };
-        cb(err, ret);
+        Client.findOneAndUpdate(
+            {cn: csr_obj.cn}, 
+            {last_beacon: Date.now()},
+            function(err, client){
+                if (err){
+                    return debug("Error sign_csr: " + err), cb(err);
+                }
+
+                if (! client){
+                    client = new Client({
+                        cn: csr_obj.cn
+                    });
+                }
+
+                if(client.last_cert){
+                    client.prev_cert = client.last_cert
+                }
+
+                client.last_cert = res.certificate;
+                client.save(function (err) {
+                    if (err){
+                        return debug("Error sign_csr: " + err), cb(err);
+                    }
+
+                    var ret = {
+                        certificate: x509_to_pkcs7_pem([res.certificate]),
+                        status: CAControllerCfssl.OK
+                    };
+                    cb(err, ret);
+                });
+            });
     })
 };
 

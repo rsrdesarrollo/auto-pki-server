@@ -9,7 +9,6 @@ var CertSigninReq = new Schema({
     subject_alt_name: [Schema.Types.Mixed],
     public_key: String,
 
-    is_removed: {type: Boolean, default: false},
     is_approved: {type: Boolean, default: false},
     auth_user: String,
     auth_date: Date,
