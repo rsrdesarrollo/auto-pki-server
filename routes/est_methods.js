@@ -102,7 +102,7 @@ router.post(OPTIONAL_LABEL_REGX + '/simpleenroll',
 
                     response_pkcs7(res, err, result);
                 } else if (result.try_later) {
-                    response_retry_after(res, err, 60);
+                    response_retry_after(res, err, 2);
                 }
             });
         }

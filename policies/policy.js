@@ -6,6 +6,8 @@ const passport = require('passport');
 const BasicStrategy = require('passport-http').BasicStrategy;
 const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
+const ClientCertStrategy = require('passport-client-cert').Strategy;
+
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 
 var jwt_opts = {
@@ -31,6 +33,12 @@ passport.use(new JwtStrategy(jwt_opts, function(jwt_payload, done){
             return done(null, false);
         }
     });
+}));
+passport.use(new ClientCertStrategy(function(clientCert, done){
+    var cn = clientCert.subject.cn;
+    var user = {name:cn, cert:clientCert};
+
+    done(null,user);
 }));
 
 passport.only_admins = function (req,res,next) {

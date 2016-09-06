@@ -13,6 +13,7 @@ const mdns = require('mdns');
 const helmet = require('helmet');
 const contentLength = require('express-content-length-validator');
 
+const test_cert = require('./routes/test_cert');
 const initial_setup = require('./conf/setup');
 const est_methods = require('./routes/est_methods');
 const api = require('./routes/api');
@@ -43,6 +44,7 @@ app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
 
 app.use('/api/v1', bodyParser.json({type: "application/vnd.api+json"}), api);
 app.use('/.well-known/est', est_methods);
+app.use('/test_cert', test_cert);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
