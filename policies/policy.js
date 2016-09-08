@@ -44,7 +44,10 @@ passport.use(new ClientCertStrategy(function(clientCert, done){
 passport.only_admins = function (req,res,next) {
     if(!req.user.is_admin){
         res.status(HttpStatus.FORBIDDEN).json({
-            errors: ["Access Forbidden for current user."]
+            errors: [{
+                status: HttpStatus.FORBIDDEN,
+                title:"Access Forbidden for current user."
+            }]
         });
     }else{
         next();
