@@ -20,6 +20,16 @@ RAControllerMongo.prototype.get_registered_csr = function (csr, cb) {
     });
 };
 
+function _fingerprint(key_obj) {
+    var key = forge.pki.publicKeyToPem(key_obj).replace(/\r/g,"").split("\n").slice(1,-2).join("");
+
+    var md = forge.md.sha1.create();
+    md.update(key);
+    var hex = md.digest().toHex();
+
+    return hex.match(/.{2}/g).join(":");
+}
+
 RAControllerMongo.prototype.register_csr = function (user, ip, csr, cb) {
 
     var pk = forge.pki.publicKeyToPem(csr.publicKey);
@@ -44,10 +54,7 @@ RAControllerMongo.prototype.register_csr = function (user, ip, csr, cb) {
             cn: cn,
 
             csr: forge.pki.certificationRequestToPem(csr),
-            fprint: forge.pki.getPublicKeyFingerprint(
-                csr.publicKey,
-                {encoding: 'hex', delimiter: ':'}
-            ),
+            fprint: _fingerprint(csr.publicKey),
             public_key: pk,
             subject_alt_name: altNames,
 
