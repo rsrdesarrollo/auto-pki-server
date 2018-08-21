@@ -11,7 +11,7 @@
     "async": "^2.0.0-rc.3",
     "body-parser": "~1.15.1",
     "content-type": "^1.0.1",
-    "debug": "~2.2.0",
+    "debug": "~>2.6.9",
     "express": "~4.13.1",
     "express-content-length-validator": "^1.0.0",
     "helmet": "^2.1.1",
